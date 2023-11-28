@@ -1,2 +1,3 @@
 1 - Crie a pasta www na raíz desse projeto e use-a para inserir os seus projetos
 2 - Use docker compose -f <docker-compose-escolhido> up -d para rodar seus containers
+3 - Seus projetos devem se conectar ao mongo usando o nome 'mongo'+ versão sem pontos, ex: mongo44
