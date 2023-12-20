@@ -43,3 +43,5 @@ RUN a2ensite localhost.localdev
 
 # Define o diretório de trabalho
 WORKDIR /var/www/html
+
+EXPOSE 3000
