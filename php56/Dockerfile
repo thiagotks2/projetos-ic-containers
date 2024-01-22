@@ -20,6 +20,8 @@ RUN apt-get install -y apache2
 
 RUN apt-get install -y apache2-utils 
 
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y keyboard-configuration
+
 RUN apt-get install -y wkhtmltopdf
 
 RUN apt-get clean 
