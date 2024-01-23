@@ -42,7 +42,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y keyboard-configuration
 
 #RUN apt-get install -y wkhtmltopdf
 
-RUN apt-get install -y unzip
+RUN apt-get install -y unzip pngquant
 RUN apt-get install -y php5.6 
 RUN apt-get install -y php5.6-dev php-pear php5.6-mongo
 RUN apt-get install -y php5.6-cli php5.6-mysql php5.6-mysqli php5.6-common php5.6-mbstring 
