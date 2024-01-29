@@ -40,7 +40,7 @@ RUN apt-get update --fix-missing -y
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y keyboard-configuration
 
-#RUN apt-get install -y wkhtmltopdf
+RUN apt-get install -y wkhtmltopdf
 
 RUN apt-get install -y unzip pngquant
 RUN apt-get install -y php5.6 
