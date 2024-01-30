@@ -36,16 +36,12 @@ RUN echo "source $NVM_DIR/nvm.sh && \
     nvm alias default $NODE_VERSION && \
     nvm use default" | bash
 
-#RUN apt-get -y install nodejs
-#RUN apt-get -y install npm
-#RUN npm install -yg grunt
-
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 RUN a2enmod headers \
  && a2enmod rewrite
 
-RUN apt-get install -y php-curl php-cli unzip php7.3 php7.3-dev php-pear php7.3-mongo php7.3-cli php7.3-mysql php7.3-mysqli php7.3-common php7.3-mbstring libapache2-mod-php7.3 php7.3-opcache php7.3-bcmath php7.3-xml php7.3-zip php7.3-curl php7.3-gd
+RUN apt-get install -y php-curl php7.3-cli unzip php7.3 php7.3-mbstring php7.3-dev php-pear php7.3-mongodb php7.3-cli php7.3-mysql php7.3-mysqli php7.3-common php7.3-mbstring libapache2-mod-php7.3 php7.3-opcache php7.3-bcmath php7.3-xml php7.3-zip php7.3-curl php7.3-gd
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
