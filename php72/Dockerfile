@@ -1,4 +1,4 @@
-FROM php:7.2-apache
+FROM arm64v8/php:7.2-apache
 
 RUN apt-get clean
 RUN apt-get update && apt-get install -y software-properties-common build-essential
