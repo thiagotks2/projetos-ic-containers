@@ -1,7 +1,19 @@
-FROM arm64v8/php:7.2-apache
+FROM arm64v8/ubuntu:23.04
 
-RUN apt-get clean
+RUN apt-get update
+
 RUN apt-get update && apt-get install -y software-properties-common build-essential
+RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
+RUN echo "deb https://ppa.launchpadcontent.net/ondrej/php/ubuntu/ jammy main" > /etc/apt/sources.list.d/ondrej-ubuntu-php-lunar.list
+RUN apt-get update
+RUN echo "Package: libgd3 \
+Pin: release n=lunar \
+Pin-Priority: 900" > /etc/apt/preferences.d/ondrejphp
+
+RUN apt-get install -yq tzdata && \
+    ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+ENV TZ="America/Sao_Paulo"
 RUN apt-get install -y autoconf
 RUN apt-get install -y pkg-config
 RUN apt-get -y install openssl
@@ -9,39 +21,84 @@ RUN apt-get -y install curl
 RUN apt-get -y install git 
 RUN apt-get -y install unzip
 RUN apt-get -y install libcurl4-openssl-dev
-RUN apt-get -y install chrpath libssl-dev libxft-dev
-RUN apt-get -y install libfreetype6 libfreetype6-dev 
-RUN apt-get -y install libfontconfig1 libfontconfig1-dev fontconfig
 RUN apt-get -y install libfontconfig
 RUN echo "export OPENSSL_CONF=/etc/ssl/" >> ~/.bashrc
+RUN apt-get -y install dh-autoreconf
 
+ENV NVM_VERSION v0.33.11
+ENV NODE_VERSION v12.22.12
+ENV NVM_DIR /usr/local/nvm
+RUN mkdir $NVM_DIR
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 
-RUN apt-get -y install nodejs
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN echo "source $NVM_DIR/nvm.sh && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION && \
+    nvm use default" | bash
+
 RUN apt-get -y install npm
 
 RUN npm install -yg grunt
 
+RUN apt-get install -y apache2
+
+RUN apt-get install -y apache2-utils
+
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+COPY apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+RUN a2enmod headers
+RUN a2enmod rewrite
+RUN a2ensite 000-default.conf
+
+RUN apt-get install -y php7.2 
+RUN apt-get install -y php7.2-cli 
+RUN apt-get install -y php7.2-curl 
+RUN apt-get install -y php7.2-mbstring
+RUN apt-get install -y php7.2-dev 
+RUN apt-get install -y php-pear php7.2-mongodb php7.2-cli php7.2-mysql php7.2-mysqli php7.2-common php7.2-mbstring libapache2-mod-php7.2
+RUN apt-get install -y php7.2-opcache php7.2-bcmath php7.2-xml php7.2-zip php7.2-curl php7.2-gd
+
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Atualiza os pacotes
-RUN apt-get update
+RUN chown -R www-data:www-data /var/www
 
-# Instala o módulo do Apache e o driver do MongoDB
-RUN a2enmod headers \
- && a2enmod rewrite
-RUN pecl install mongodb-1.16.2 && docker-php-ext-enable mongodb
-RUN docker-php-ext-install mysqli
+#Ativar multi-arch com compatibilidade para amd64 (necessário para instalar e utilizar o phantonJs em sites diamante)
+RUN dpkg --add-architecture amd64
 
-COPY apache/sites.apache.conf /usr/local/apache2/conf/sites.apache.conf
-COPY apache/localhost.localdev.conf /etc/apache2/sites-available/localhost.localdev.conf
+RUN sed -i "s/deb h/deb [arch=arm64] h/g" /etc/apt/sources.list
 
-RUN echo "Include /usr/local/apache2/conf/sites.apache.conf" \
-    >> /usr/local/apache2/conf/httpd.conf
+RUN echo "# arm64 repositories" > /etc/apt/sources.list
+RUN echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports lunar main restricted universe multiverse " >> /etc/apt/sources.list
+RUN echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports lunar-updates main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports lunar-security main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu lunar main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu lunar-updates main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu lunar-security main restricted universe multiverse" >> /etc/apt/sources.list
 
-RUN a2ensite localhost.localdev
+RUN apt update -y
+RUN apt install -y libc6:amd64
 
-# Define o diretório de trabalho
-WORKDIR /var/www/html
+RUN apt install -y chrpath libssl-dev:amd64 libxft-dev:amd64
+RUN apt-get install -y libfreetype6:amd64 libfreetype6-dev:amd64
+RUN apt-get install -y libfontconfig1:amd64 libfontconfig1-dev:amd64
+RUN apt install -y wget
 
-EXPOSE 3000
+WORKDIR /home
+
+ENV PHANTOM_JS phantomjs-2.1.1-linux-x86_64
+RUN wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOM_JS.tar.bz2
+RUN apt install -y bzip2:amd64
+RUN tar xvjf $PHANTOM_JS.tar.bz2
+RUN mv $PHANTOM_JS /usr/local/share
+RUN ln -sf /usr/local/share/$PHANTOM_JS/bin/phantomjs /usr/local/bin
+RUN apt install -y libstdc++6:amd64
+
+EXPOSE 80
+
+CMD ["apache2ctl", "-D", "FOREGROUND"]
