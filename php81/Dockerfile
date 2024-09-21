@@ -45,7 +45,7 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN a2enmod headers \
  && a2enmod rewrite
 
-RUN apt-get install -y php-curl php-cli unzip php8.3 php8.3-dev php-pear php8.3-mongo php8.3-cli php8.3-mysql php8.3-mysqli php8.3-common php8.3-mbstring libapache2-mod-php8.3 php8.3-opcache php8.3-bcmath php8.3-xml php8.3-zip php8.3-curl php8.3-gd
+RUN apt-get install -y php-curl php-cli unzip php8.1 php8.1-dev php-pear php8.1-mongodb php-mongodb  php8.1-dom php8.1-cli php8.1-mysql php8.1-mysqli php8.1-common php8.1-mbstring libapache2-mod-php8.1 php8.1-opcache php8.1-bcmath php8.1-xml php8.1-zip php8.1-curl php8.1-gd
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
