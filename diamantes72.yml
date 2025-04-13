@@ -17,9 +17,13 @@ services:
       - dck
 
   diamantes72:
+    env_file:
+      - .env
     build:
       context: ./diamantes72
       dockerfile: Dockerfile
+      args:
+        TARGETARCH: ${TARGETARCH}
     container_name: diamantes72
     ports:
       - "80:80"
