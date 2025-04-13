@@ -1,0 +1,49 @@
+services:
+  mongo44:
+    container_name: mongo44
+    image: arm64v8/mongo:4.4
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: infocenter
+      MONGO_INITDB_ROOT_PASSWORD: infocenter6148
+      MONGO_INITDB_DATABASE: admin
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - "27017:27017"
+    volumes:
+      - 'dck-mongo44:/data/db'
+    networks:
+      - dck
+
+  diamantes72:
+    build:
+      context: ./diamantes72
+      dockerfile: Dockerfile
+    container_name: diamantes72
+    ports:
+      - "80:80"
+      - "3000:3000"
+      - "3001:3001"
+      - "9000:9000"
+    volumes:
+      - ./www:/var/www/html
+      - ./diamantes72/logs/nginx:/var/log/nginx
+    tty: true
+    stdin_open: true
+    environment:
+      - TZ=America/Sao_Paulo
+    restart: unless-stopped
+    depends_on:
+      - mongo44
+    networks:
+      - dck
+    working_dir: /var/www/html/
+
+networks:
+  dck:
+    driver: bridge
+
+volumes:
+  dck-mongo44:
+    driver: local
