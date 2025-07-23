@@ -15,10 +15,11 @@ Container de desenvolvimento local baseado em **Arch Linux** com suporte a:
 
 . ├── diamantes72/
   │  ├── Dockerfile # Dockerfile do container
-  │  ├── entrypoint.sh # Script de inicialização │
+  │  ├── entrypoint.sh # Script de inicialização
+  │  ├── default.conf # Arquivo de configuração nginx
   │  ├── supervisord.conf # Configuração do supervisord 
   │  └── logs/nginx/ # Logs do Nginx 
-  ├── www/ # Código-fonte da aplicação 
+  ├── www/ # Código-fonte de vários sites
   ├── diamantes72.yml # Docker Compose principal
 
 ---
