@@ -23,10 +23,11 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Usa o novo local padrão do Composer (para Composer 2+)
+ENV COMPOSER_HOME="/root/.config/composer"
+ENV PATH="/root/.config/composer/vendor/bin:${PATH}"
+
 RUN composer global require laravel/installer
-
-ENV PATH="$PATH:/root/.composer/vendor/bin"
-
 
 COPY ./php-fpm-www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY ./php-fpm.conf /usr/local/etc/php-fpm.conf
