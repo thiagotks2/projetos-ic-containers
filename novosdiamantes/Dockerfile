@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev libreadline-dev libmcrypt-dev libmemcached-dev libtool \
     && docker-php-ext-install zip pdo pdo_mysql mbstring exif pcntl intl gd bcmath sockets
 
-RUN pecl install mongodb-1.15.0 && docker-php-ext-enable mongodb
+RUN pecl install mongodb && docker-php-ext-enable mongodb
 
 ENV NVM_DIR=/root/.nvm
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
