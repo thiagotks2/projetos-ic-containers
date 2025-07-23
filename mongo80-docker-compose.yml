@@ -16,27 +16,6 @@ services:
       - ./novosdiamantes/mongo-init:/docker-entrypoint-initdb.d
     networks:
       - dck
-
-  php56:
-    container_name: php56
-    build: ./php56/
-    links:
-      - mongo
-    ports:
-      - "80:80"
-      - "3000:3000"
-      - "3001:3001"
-      - "9000:9000"
-    volumes:
-      - ./www:/var/www/html/
-      - ./:/usr/local/apache2/htdocs
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
-    depends_on:
-      - mongo
-    networks:
-      - dck
-    working_dir: /var/www/html/
   
 networks:
   dck:
