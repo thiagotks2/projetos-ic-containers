@@ -2,7 +2,7 @@ services:
 
   mongo:
     container_name: mongo
-    image: mongo:7.0
+    image: mongo:4.4
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: infocenter
@@ -13,26 +13,26 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - 'dck-mongo-novosdiamantes:/data/db'
-      - ./novosdiamantes/mongo-init:/docker-entrypoint-initdb.d
+      - 'dck-mongo:/data/db'
+      - ./gonzagahome/mongo-init:/docker-entrypoint-initdb.d
     networks:
       - dck
 
-  novosdiamantes:
+  gonzagahome:
     build:
-      context: ./novosdiamantes
+      context: ./gonzagahome
       dockerfile: Dockerfile
-    container_name: novosdiamantes
+    container_name: gonzagahome
     ports:
       - "80:80"
       - "3000:3000"
       - "3001:3001"
       - "9000:9000"
+      - "5173:5173"
     volumes:
-      - ./www:/var/www/html
-      - ./novosdiamantes/novosdiamantesindex.php:/var/www/html/novosdiamantesindex.php
-      - ./novosdiamantes/default.conf:/etc/nginx/sites-available/default
-      - ./novosdiamantes/logs/nginx:/var/log/nginx
+      - ./www/gonzaga-home:/var/www/html
+      - ./gonzagahome/default.conf:/etc/nginx/sites-available/default
+      - ./gonzagahome/logs/nginx:/var/log/nginx
     tty: true
     stdin_open: true
     depends_on:
@@ -45,5 +45,5 @@ networks:
     driver: bridge
 
 volumes:
-  dck-mongo-novosdiamantes:
+  dck-mongo:
     driver: local
