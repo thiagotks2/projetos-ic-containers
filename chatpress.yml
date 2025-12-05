@@ -1,0 +1,49 @@
+services:
+
+  postgres:
+    image: postgres:15
+    command: >
+      bash -c "apt-get update &&
+               apt-get install -y postgresql-15-pgvector &&
+               docker-entrypoint.sh postgres"
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: chatpress
+      POSTGRES_PASSWORD: chatpress4286
+      POSTGRES_DB: chatpress
+    ports:
+      - "5432:5432"
+    volumes:
+      - dck-pgdata-chatpress:/var/lib/postgresql/data
+    networks:
+      - dck-chatpress
+
+  chatpress:
+    build:
+      context: ./chatpress
+      dockerfile: Dockerfile
+    container_name: chatpress
+    ports:
+      - "80:80"
+      - "3000:3000"
+      - "3001:3001"
+      - "9000:9000"
+    volumes:
+      - ./www/chatpress:/var/www/html
+      - ./chatpress/default.conf:/etc/nginx/sites-available/default
+      - ./chatpress/logs/nginx:/var/log/nginx
+    tty: true
+    stdin_open: true
+    depends_on:
+      - postgres
+    networks:
+      - dck-chatpress
+
+networks:
+  dck-chatpress:
+    driver: bridge
+
+volumes:
+  dck-pgdata-chatpress:
+    driver: local

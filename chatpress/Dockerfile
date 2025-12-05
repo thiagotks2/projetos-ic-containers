@@ -1,4 +1,4 @@
-FROM php:8.4-fpm
+FROM php:8.5-fpm
 
 LABEL maintainer="Thiago Cardoso <silva.thiagocardoso@gmail.com>"
 
@@ -10,20 +10,17 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev libicu-dev libfreetype6-dev libmagickwand-dev libssl-dev libcurl4-openssl-dev \
     pkg-config libxslt1-dev libpq-dev libevent-dev libsqlite3-dev libtidy-dev libgd-dev \
     zlib1g-dev libreadline-dev libmcrypt-dev libmemcached-dev libtool \
-    && docker-php-ext-install zip pdo pdo_mysql mbstring exif pcntl intl gd bcmath sockets
-
-RUN pecl install mongodb-2.1.1 && docker-php-ext-enable mongodb
+    && docker-php-ext-install zip pdo_pgsql mbstring exif pcntl intl gd bcmath sockets
 
 ENV NVM_DIR=/root/.nvm
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
     . "$NVM_DIR/nvm.sh" && \
-    nvm install 20 && \
-    nvm use 20 && \
-    nvm alias default 20
+    nvm install 22 && \
+    nvm use 22 && \
+    nvm alias default 22
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Usa o novo local padrão do Composer (para Composer 2+)
 ENV COMPOSER_HOME="/root/.config/composer"
 ENV PATH="/root/.config/composer/vendor/bin:${PATH}"
 
@@ -37,32 +34,6 @@ COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 RUN mkdir -p /var/log/nginx /var/run/php /var/www/html
-
-RUN apt-get update && apt-get install -y \
-    chromium \
-    ca-certificates \
-    fonts-liberation \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libgdk-pixbuf-xlib-2.0-0 \
-    libnspr4 \
-    libnss3 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxkbcommon0 \
-    libxrandr2 \
-    xdg-utils \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-ENV PUPPETEER_SKIP_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-RUN . "$NVM_DIR/nvm.sh" && npm install -g puppeteer
-
 
 WORKDIR /var/www/html
 ENTRYPOINT ["/entrypoint.sh"]
