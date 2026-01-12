@@ -1,0 +1,49 @@
+services:
+
+  mongo:
+    container_name: mongo
+    image: mongo:4.4
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: infocenter
+      MONGO_INITDB_ROOT_PASSWORD: infocenter6148
+      MONGO_INITDB_DATABASE: admin
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - "27017:27017"
+    volumes:
+      - 'dck-mongo:/data/db'
+      - ./axis21/mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - dck
+
+  sis3_2022:
+    build:
+      context: ./sis3_2022
+      dockerfile: Dockerfile
+    container_name: sis3
+    ports:
+      - "80:80"
+      - "3000:3000"
+      - "3001:3001"
+      - "9000:9000"
+      - "5173:5173"
+    volumes:
+      - ./www/sis3_2022:/var/www/html
+      - ./sis3_2022/default.conf:/etc/nginx/sites-available/default
+      - ./sis3_2022/logs/nginx:/var/log/nginx
+    tty: true
+    stdin_open: true
+    depends_on:
+      - mongo
+    networks:
+      - dck
+
+networks:
+  dck:
+    driver: bridge
+
+volumes:
+  dck-mongo:
+    driver: local
