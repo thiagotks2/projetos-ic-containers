@@ -23,7 +23,6 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Usa o novo local padrão do Composer (para Composer 2+)
 ENV COMPOSER_HOME="/root/.config/composer"
 ENV PATH="/root/.config/composer/vendor/bin:${PATH}"
 

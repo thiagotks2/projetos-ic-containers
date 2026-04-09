@@ -36,7 +36,7 @@ RUN chmod +x /entrypoint.sh
 RUN mkdir -p /var/log/nginx /var/run/php /var/www/html
 
 RUN touch /var/log/reverb.log /var/log/reverb-error.log \
- && chown -R www-data:www-data /var/log
+    && chown -R www-data:www-data /var/log
 
 WORKDIR /var/www/html
 ENTRYPOINT ["/entrypoint.sh"]

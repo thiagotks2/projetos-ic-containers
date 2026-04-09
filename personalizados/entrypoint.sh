@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "✅ Iniciando ambiente Novos Diamantes"
+echo "✅ Iniciando ambiente Personalizados com MongoDB"
 
 mkdir -p /var/run/php
 chown www-data:www-data /var/run/php

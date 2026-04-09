@@ -4,5 +4,5 @@ www/
 ._.DS_Store
 **/._.DS_Store
 .env
-diamantes72/logs/nginx
-novosdiamantes/logs/nginx
+diamantes72/logs/nginx/*
+novosdiamantes/logs/nginx/*

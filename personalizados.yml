@@ -18,11 +18,11 @@ services:
     networks:
       - dck
 
-  sis3_2022:
+  personalizados:
     build:
-      context: ./sis3_2022
+      context: ./personalizados
       dockerfile: Dockerfile
-    container_name: sis3
+    container_name: personalizados
     ports:
       - "80:80"
       - "3000:3000"
@@ -30,9 +30,10 @@ services:
       - "9000:9000"
       - "5173:5173"
     volumes:
-      - ./www/sis3_2022:/var/www/html
-      - ./sis3_2022/default.conf:/etc/nginx/sites-available/default
-      - ./sis3_2022/logs/nginx:/var/log/nginx
+      - ./www:/var/www/html
+      - ./personalizados/default.conf:/etc/nginx/sites-available/default
+      - ./personalizados/logs/nginx:/var/log/nginx
+      - ./personalizados/wwwindex.php:/var/www/html/index.php
     tty: true
     stdin_open: true
     depends_on:
