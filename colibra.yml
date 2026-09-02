@@ -1,0 +1,79 @@
+services:
+  mysql:
+    container_name: colibra-mysql
+    image: mysql:8.0.36
+    restart: unless-stopped
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8
+      --collation-server=utf8_general_ci
+      --sql-mode=NO_ENGINE_SUBSTITUTION
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: infocenterhost1
+    ports:
+      - "3306:3306"
+    volumes:
+      - 'dck-colibra-mysql:/var/lib/mysql'
+      - './colibra/-- infocenterhost1.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro'
+      - './colibra/cidades_202609021217.sql:/docker-entrypoint-initdb.d/02-cidades.sql:ro'
+      - './colibra/03-suporte.sql:/docker-entrypoint-initdb.d/03-suporte.sql:ro'
+    networks:
+      - dck
+
+  mongo:
+    container_name: mongo
+    image: mongo:4.4
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: infocenter
+      MONGO_INITDB_ROOT_PASSWORD: infocenter6148
+      MONGO_INITDB_DATABASE: admin
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - "27017:27017"
+    volumes:
+      - 'dck-mongo:/data/db'
+      - ./novosdiamantes/mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - dck
+
+  colibra:
+    env_file:
+      - .env
+    build:
+      context: ./colibra
+      dockerfile: Dockerfile
+      args:
+        TARGETARCH: ${TARGETARCH}
+    container_name: colibra
+    ports:
+      - "80:80"
+      - "3000:3000"
+      - "3001:3001"
+      - "9000:9000"
+    volumes:
+      - ./www:/var/www/html
+      - ./colibra/logs/nginx:/var/log/nginx
+    tty: true
+    stdin_open: true
+    environment:
+      - TZ=America/Sao_Paulo
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - mongo
+    networks:
+      - dck
+    working_dir: /var/www/html/
+
+networks:
+  dck:
+    driver: bridge
+
+volumes:
+  dck-colibra-mysql:
+    driver: local
+  dck-mongo:
+    driver: local
