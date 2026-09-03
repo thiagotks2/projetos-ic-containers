@@ -16,8 +16,9 @@ services:
     volumes:
       - 'dck-colibra-mysql:/var/lib/mysql'
       - './colibra/-- infocenterhost1.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro'
-      - './colibra/cidades_202609021217.sql:/docker-entrypoint-initdb.d/02-cidades.sql:ro'
-      - './colibra/03-suporte.sql:/docker-entrypoint-initdb.d/03-suporte.sql:ro'
+      - './colibra/cidades_202609021953.sql:/docker-entrypoint-initdb.d/02-cidades.sql:ro'
+      - './colibra/bairros_202609021954.sql:/docker-entrypoint-initdb.d/03-bairros.sql:ro'
+      - './colibra/04-suporte.sql:/docker-entrypoint-initdb.d/04-suporte.sql:ro'
     networks:
       - dck
 
