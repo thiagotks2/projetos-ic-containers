@@ -3069,3 +3069,18 @@ CREATE TABLE `atendimento_tipos` (
     CONSTRAINT `atendimento_tipos_atendimento` FOREIGN KEY (`atendimento_id`) REFERENCES `atendimentos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `atendimento_tipos_tipo` FOREIGN KEY (`tipo_id`) REFERENCES `tipos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1 ROW_FORMAT = DYNAMIC;
+-- infocenterhost1.imoveis_modosdetrabalhar_log definition
+
+CREATE TABLE `imoveis_modosdetrabalhar_log` (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `imobiliaria_id` int unsigned NOT NULL,
+    `imovel_id` int unsigned NOT NULL,
+    `usuario_id` int unsigned NOT NULL,
+    `evento` varchar(100) NOT NULL DEFAULT 'Troca de modo de trabalhar',
+    `descricao` text NOT NULL,
+    `data_alteracao` datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_imobiliaria_imovel` (`imobiliaria_id`, `imovel_id`),
+    KEY `idx_usuario` (`usuario_id`),
+    KEY `idx_data_alteracao` (`data_alteracao`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 ROW_FORMAT = DYNAMIC;
